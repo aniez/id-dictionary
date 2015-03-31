@@ -103,13 +103,20 @@
 		res.send({description: <span class="hljs-string">"Hi, there will be documentation ..."</span>});
 	});
 
-
-	router.post(<span class="hljs-string">"/synonyms"</span>, validate({
-		body: create.schema
-	}), create.action);
-	router.post(<span class="hljs-string">"/after-test-cleanup"</span>, validate({
-		body: afterTestCleanup.schema
-	}), afterTestCleanup.action);</pre></div></div>
+	router.post(
+		<span class="hljs-string">"/synonyms"</span>,
+		validate({
+			body: create.schema
+		}),
+		create.action
+	);
+	router.post(
+		<span class="hljs-string">"/after-test-cleanup"</span>,
+		validate({
+			body: afterTestCleanup.schema
+		}),
+		afterTestCleanup.action
+	);</pre></div></div>
             
         </li>
         
