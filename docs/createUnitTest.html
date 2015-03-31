@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>createUnitTest.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="afterTestCleanup.html">
+                  afterTestCleanup.js
+                </a>
+              
+                
+                <a class="source" href="create.html">
+                  create.js
+                </a>
+              
+                
+                <a class="source" href="createAcceptanceTest.html">
+                  createAcceptanceTest.js
+                </a>
+              
+                
+                <a class="source" href="createUnitTest.html">
+                  createUnitTest.js
+                </a>
+              
+                
+                <a class="source" href="db.html">
+                  db.js
+                </a>
+              
+                
+                <a class="source" href="dbHelper.html">
+                  dbHelper.js
+                </a>
+              
+                
+                <a class="source" href="routes.html">
+                  routes.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>createUnitTest.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">"assert"</span>); <span class="hljs-comment">// core module</span>
+<span class="hljs-keyword">var</span> createFactory = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./create"</span>);
+<span class="hljs-keyword">var</span> validate = <span class="hljs-built_in">require</span>(<span class="hljs-string">"jsonschema"</span>).validate;
+<span class="hljs-keyword">var</span> sinon = <span class="hljs-built_in">require</span>(<span class="hljs-string">"sinon"</span>);
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">"chai"</span>).expect;
+<span class="hljs-keyword">var</span> Promise = <span class="hljs-built_in">require</span>(<span class="hljs-string">"bluebird"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>presenter / controller tests are painfull … TODO search for some express-test package</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+	describe(<span class="hljs-string">"create synonyms"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+		describe(<span class="hljs-string">"action"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+			<span class="hljs-keyword">var</span> create = <span class="hljs-literal">null</span>;
+			<span class="hljs-keyword">var</span> dbInterface ;
+			<span class="hljs-keyword">var</span> dbMock;
+
+			beforeEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+				dbInterface = {insert: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{}};
+				dbMock = sinon.mock(dbInterface);
+				create = createFactory(dbInterface);
+			});
+
+			it(<span class="hljs-string">"should insert request.body to DB and return new _id"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(done)</span></span>{
+				<span class="hljs-keyword">var</span> req = {
+					body: {name: <span class="hljs-string">"mocked body"</span>},
+				};
+				<span class="hljs-keyword">var</span> res = {
+					send: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(id)</span> </span>{
+						<span class="hljs-keyword">var</span> err;
+						<span class="hljs-keyword">if</span> (id !== <span class="hljs-string">"mockId"</span>) {
+							err = <span class="hljs-string">"unexpected body to send: "</span> + id;
+						}
+						done(err);
+					}
+				};
+				<span class="hljs-keyword">var</span> mockPromise = <span class="hljs-keyword">new</span> Promise(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(resolve, reject)</span> </span>{
+					resolve(<span class="hljs-string">"mockId"</span>);
+				});
+				dbMock.expects(<span class="hljs-string">"insert"</span>).once().returns(mockPromise);
+
+				create.action(req, res);
+
+				dbMock.verify();
+			});
+
+			it(<span class="hljs-string">"should change status to 400 and send errormessage on error during insert"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(done)</span></span>{
+				<span class="hljs-keyword">var</span> req = {
+					body: {name: <span class="hljs-string">"mocked body"</span>},
+				};
+				<span class="hljs-keyword">var</span> res = {
+					status: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(status)</span> </span>{
+						expect(status).to.equal(<span class="hljs-number">400</span>);
+						<span class="hljs-keyword">return</span> res;
+					},
+					send: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(body)</span> </span>{
+						<span class="hljs-keyword">var</span> err;
+						<span class="hljs-keyword">if</span> (body !== <span class="hljs-string">"error description"</span>) {
+							err = <span class="hljs-string">"unexpected body to send: "</span> + body;
+						}
+						done(err);
+					}
+				};
+				<span class="hljs-keyword">var</span> rejection;
+				<span class="hljs-keyword">var</span> mockPromise = <span class="hljs-keyword">new</span> Promise(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(resolve, reject)</span> </span>{
+					rejection = reject;
+				});
+				dbMock.expects(<span class="hljs-string">"insert"</span>).once().returns(mockPromise);
+
+				create.action(req, res);
+				rejection(<span class="hljs-string">"error description"</span>);
+
+				dbMock.verify();
+			});
+		});
+
+		describe(<span class="hljs-string">"schema"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+			<span class="hljs-keyword">var</span> create = <span class="hljs-literal">null</span>;
+			beforeEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+				create = createFactory();
+			});
+			it(<span class="hljs-string">"should accept right object"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+				<span class="hljs-keyword">var</span> rightRequest = {
+					id: <span class="hljs-string">"sparta"</span>,
+					namespaces: [
+						<span class="hljs-string">"football"</span>,
+						<span class="hljs-string">"1-czech-league"</span>,
+					],
+					synonyms:[
+						<span class="hljs-string">"AC Sparta Praha"</span>,
+						<span class="hljs-string">"AC Sparta"</span>,
+						<span class="hljs-string">"Sparta"</span>
+					],
+				};
+
+				<span class="hljs-keyword">var</span> result = validate(rightRequest, create.schema);
+
+				<span class="hljs-keyword">if</span> (result.errors.length &gt; <span class="hljs-number">0</span>) {
+					<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Validation failed: "</span> + result.errors.toString());
+				}
+			});
+		});
+	});
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

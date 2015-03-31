@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>db.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="afterTestCleanup.html">
+                  afterTestCleanup.js
+                </a>
+              
+                
+                <a class="source" href="create.html">
+                  create.js
+                </a>
+              
+                
+                <a class="source" href="createAcceptanceTest.html">
+                  createAcceptanceTest.js
+                </a>
+              
+                
+                <a class="source" href="createUnitTest.html">
+                  createUnitTest.js
+                </a>
+              
+                
+                <a class="source" href="db.html">
+                  db.js
+                </a>
+              
+                
+                <a class="source" href="dbHelper.html">
+                  dbHelper.js
+                </a>
+              
+                
+                <a class="source" href="routes.html">
+                  routes.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>db.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Promise = <span class="hljs-built_in">require</span>(<span class="hljs-string">"bluebird"</span>);
+<span class="hljs-keyword">var</span> nanoFactory = <span class="hljs-built_in">require</span>(<span class="hljs-string">"nano"</span>);
+<span class="hljs-keyword">var</span> winston = <span class="hljs-built_in">require</span>(<span class="hljs-string">"winston"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="couch-db-factory">Couch DB factory</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <ul>
+<li>get info about DB</li>
+<li>if DB does not exists, try to create and then use it</li>
+<li>there is place for initiation of indexes and views</li>
+</ul>
+<p>Example (params in example are defaults):</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> db = factory({
+    url: <span class="hljs-string">"http://localhost:3000/db/"</span>,
+    dbName: <span class="hljs-string">"idDictionaryDefaultDb"</span>,
+});
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = factory;
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@singleton"</span>] = <span class="hljs-literal">true</span>;
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [];
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span> <span class="hljs-params">(config)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>TODO? ‘true’ as config param will pass but will not work</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	config = config || {};
+	<span class="hljs-keyword">var</span> url = config.url || <span class="hljs-string">"http://localhost:3000/db/"</span>;
+	<span class="hljs-keyword">var</span> dbName = config.dbName || <span class="hljs-string">"idDictionaryDefaultDb"</span>;
+	<span class="hljs-keyword">var</span> nano = nanoFactory({
+		url: url,
+		parseUrl: <span class="hljs-literal">false</span>,
+	});
+	Promise.promisifyAll(nano);
+	Promise.promisifyAll(nano.db);
+
+	<span class="hljs-keyword">var</span> db;
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">use</span> <span class="hljs-params">(info)</span> </span>{
+		<span class="hljs-keyword">return</span> nano.db.use(dbName);
+	}
+
+	<span class="hljs-keyword">var</span> initiation = nano.db.getAsync(dbName)
+	.then(use)
+	.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+		<span class="hljs-keyword">if</span> (err.error == <span class="hljs-string">"not_found"</span>) {
+			winston.info(<span class="hljs-string">"DB does not exist, creating new one."</span>);
+			<span class="hljs-keyword">return</span> nano.db.createAsync(dbName)
+				.then(use);
+		}
+		<span class="hljs-keyword">throw</span> err;
+	}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(database)</span> </span>{
+		Promise.promisifyAll(database);
+		db = database;
+		winston.debug(<span class="hljs-string">"DB is ready and promisified"</span>);
+		<span class="hljs-keyword">return</span> db;
+	}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>TODO prepare views and reindex</p>
+<p>but we don’t need to wait for views to be ready, so return previous promise</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">return</span> db;
+	}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+		winston.error(<span class="hljs-string">"Failed to create AND/OR use DB"</span>, err);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Throws error</p>
+<ul>
+<li>when failed to get info about DB with different reason than ‘not_found’.
+TODO probably should improve detection. Simple 404 from ANY server does mean ‘not_found’</li>
+<li>when failed to create DB</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">throw</span> err;
+	});
+	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+		<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> db == <span class="hljs-string">"undefined"</span>) {
+			<span class="hljs-keyword">return</span> initiation;
+		} <span class="hljs-keyword">else</span> {
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(resolver)</span> </span>{ resolver(db);});
+		}
+	}
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

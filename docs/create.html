@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>create.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="afterTestCleanup.html">
+                  afterTestCleanup.js
+                </a>
+              
+                
+                <a class="source" href="create.html">
+                  create.js
+                </a>
+              
+                
+                <a class="source" href="createAcceptanceTest.html">
+                  createAcceptanceTest.js
+                </a>
+              
+                
+                <a class="source" href="createUnitTest.html">
+                  createUnitTest.js
+                </a>
+              
+                
+                <a class="source" href="db.html">
+                  db.js
+                </a>
+              
+                
+                <a class="source" href="dbHelper.html">
+                  dbHelper.js
+                </a>
+              
+                
+                <a class="source" href="routes.html">
+                  routes.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>create.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="create-synonym">Create Synonym</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>creates synonym and save it into DB</p>
+<p>with defalt router:</p>
+<pre><code class="lang-bash">curl --include \
+    --request POST \
+    --header <span class="hljs-string">"Content-Type: application/json"</span> \
+    --data-binary <span class="hljs-string">'{
+        "id": "sparta",
+        "namespaces": [
+            "football",
+            "1-czech-league",
+        ],
+        "synonyms": [
+            "AC Sparta Praha",
+            "AC Sparta",
+            "Sparta"
+        ],
+    }'</span> \
+    <span class="hljs-string">'http://ID_DICTIONARY_PATH/synonyms'</span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = factory;
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@singleton"</span>] = <span class="hljs-literal">true</span>;
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [<span class="hljs-string">"./dbHelper"</span>];
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span> <span class="hljs-params">(dbHelper)</span> </span>{
+	<span class="hljs-keyword">return</span> {
+		action: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(req, res, next)</span> </span>{
+			dbHelper.insert(req.body).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(insertedId)</span> </span>{
+				res.send(insertedId);
+			}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(error)</span> </span>{
+				res.status(<span class="hljs-number">400</span>).send(error);
+			});
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><a name="SynonymSchema"></a>Synonym schema:</p>
+<pre><code class="lang-json">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"liverpool"</span></span>,
+    "<span class="hljs-attribute">namespaces</span>": <span class="hljs-value">[
+        <span class="hljs-string">"football"</span>,
+        <span class="hljs-string">"england-premier-league"</span>
+    ]</span>,
+    "<span class="hljs-attribute">synonyms</span>": <span class="hljs-value">[
+        <span class="hljs-string">"Liverpool FC"</span>,
+        <span class="hljs-string">"Liverpool F.C."</span>,
+        <span class="hljs-string">"Liverpool"</span>,
+        <span class="hljs-string">"FC Liverpool"</span>,
+    ]
+</span>}
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		schema: {
+			type: <span class="hljs-string">'object'</span>,
+			properties: {
+				id: {
+					type: <span class="hljs-string">"string"</span>,
+					required: <span class="hljs-literal">true</span>,
+				},
+				namespaces: {
+					type: <span class="hljs-string">"array"</span>,
+					required: <span class="hljs-literal">true</span>,
+					items: {
+						type: <span class="hljs-string">"string"</span>,
+					},
+					minItems: <span class="hljs-number">2</span>,
+				},
+				synonyms: {
+					type: <span class="hljs-string">"array"</span>,
+					required: <span class="hljs-literal">true</span>,
+					items: {
+						type: <span class="hljs-string">"string"</span>,
+					},
+					minItems: <span class="hljs-number">1</span>,
+				},
+			},
+		},
+	};
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
