@@ -12,15 +12,24 @@ function factory(create, afterTestCleanup, translate) {
 		res.send({description: "Hi, there will be documentation ..."});
 	});
 
-
-	router.post("/synonyms", validate({
-		body: create.schema
-	}), create.action);
-	router.post("/after-test-cleanup", validate({
-		body: afterTestCleanup.schema
-	}), afterTestCleanup.action);
-	router.get("/translate/:namespaces/:query", translate.action);
-
+	router.post(
+		"/synonyms",
+		validate({
+			body: create.schema
+		}),
+		create.action
+	);
+	router.post(
+		"/after-test-cleanup",
+		validate({
+			body: afterTestCleanup.schema
+		}),
+		afterTestCleanup.action
+	);
+	router.get(
+		"/translate/:namespaces/:query",
+		translate.action
+	);
 	// TODO:
 	//```javascript
 	// router.patch("/synonym/:id", patch)

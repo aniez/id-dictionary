@@ -27,13 +27,16 @@ describe("Id dictionary", function(){
 				method: 'POST',
 				json: sparta
 			};
-			request(options).then(function (response) {
-				expect(response).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
-				toCleanup.push(response);
-				done();
-			}).catch(function (err) {
-				done(err);
-			});
+			request(options)
+				.then(function (response) {
+					expect(response).to.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+					toCleanup.push(response);
+					done();
+				})
+				.catch(function (err) {
+					done(err);
+				})
+			;
 		});
 
 		it("should reject malformed synonym", function (done) {
@@ -55,12 +58,15 @@ describe("Id dictionary", function(){
 				method: 'POST',
 				json: sparta
 			};
-			request(options).then(function (response) {
-				toCleanup.push(response);
-				done(new Error("This request should fail", response));
-			}).catch(function (err) {
-				done();
-			});
+			request(options)
+				.then(function (response) {
+					toCleanup.push(response);
+					done(new Error("This request should fail", response));
+				})
+				.catch(function (err) {
+					done();
+				})
+			;
 		});
 	});
 
@@ -74,12 +80,15 @@ describe("Id dictionary", function(){
 			method: 'POST',
 			json: toCleanup,
 		};
-		request(options).then(function (response) {
-			toCleanup.length = 0;
-			done();
-		}).catch(function (err) {
-			console.log("Failed to cleanup. Items:", options);
-			done(err);
-		});
+		request(options)
+			.then(function (response) {
+				toCleanup.length = 0;
+				done();
+			})
+			.catch(function (err) {
+				console.log("Failed to cleanup. Items:", options);
+				done(err);
+			})
+		;
 	});
 });
