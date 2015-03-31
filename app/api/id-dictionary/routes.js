@@ -30,6 +30,7 @@ function factory(create, afterTestCleanup, translate) {
 		"/translate/:namespaces/:query",
 		translate.action
 	);
+
 	// TODO:
 	//```javascript
 	// router.patch("/synonym/:id", patch)
