@@ -24,3 +24,9 @@ run ALL tests, while server is running
 ```
 mocha app/**/*Test.js
 ```
+
+Generate documentation:
+```
+docco app/api/id-dictionary/*.js
+```
+Documentation should be in .gitignore, but for now it's part of repo

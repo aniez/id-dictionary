@@ -2,9 +2,10 @@ var validate = require("jsonschema").validate;
 var expect = require("chai").expect;
 var request = require("request-promise");
 // expects that config has .idDictionaryUrl
-var config = require("../config");
+var config = require("../acceptanceTestConfig");
 
 describe("Id dictionary", function(){
+	// to hold created document IDs
 	var toCleanup = [];
 	describe("create synonym", function(){
 		it("should accept synonyms", function (done) {
@@ -38,7 +39,7 @@ describe("Id dictionary", function(){
 		it("should reject malformed synonym", function (done) {
 			var url = config.idDictionaryUrl + "/synonyms"
 			var sparta = {
-				// id: "sparta",
+				// Removed id: "sparta",
 				namespaces: [
 					"football",
 					"1-czech-league",
@@ -62,6 +63,8 @@ describe("Id dictionary", function(){
 			});
 		});
 	});
+
+	// remove created documents:
 	after(function (done) {
 		if (toCleanup.length < 1) {
 			done();

@@ -67,6 +67,7 @@ describe("Id dictionary", function(){
 
 				create.action(req, res);
 				rejection("error description");
+
 				dbMock.verify();
 			});
 		});
@@ -76,7 +77,6 @@ describe("Id dictionary", function(){
 			beforeEach(function(){
 				create = createFactory();
 			});
-
 			it("should accept right object", function(){
 				var rightRequest = {
 					id: "sparta",
@@ -91,8 +91,8 @@ describe("Id dictionary", function(){
 					],
 				};
 
-				// throws exception
 				var result = validate(rightRequest, create.schema);
+
 				if (result.errors.length > 0) {
 					throw new Error("Validation failed: " + result.errors.toString());
 				}
