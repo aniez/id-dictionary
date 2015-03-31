@@ -128,11 +128,14 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>		insert: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(body)</span> </span>{
-			<span class="hljs-keyword">return</span> getDb().then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{
-				<span class="hljs-keyword">return</span> db.insertAsync(body);
-			}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(inserted)</span> </span>{
-				<span class="hljs-keyword">return</span> inserted[<span class="hljs-number">0</span>].id;
-			});
+			<span class="hljs-keyword">return</span> getDb()
+				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{
+					<span class="hljs-keyword">return</span> db.insertAsync(body);
+				})
+				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(inserted)</span> </span>{
+					<span class="hljs-keyword">return</span> inserted[<span class="hljs-number">0</span>].id;
+				})
+			;
 		},
 	};
 };</pre></div></div>

@@ -133,13 +133,16 @@ describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-fun
 				method: <span class="hljs-string">'POST'</span>,
 				json: sparta
 			};
-			request(options).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
-				expect(response).to.match(<span class="hljs-regexp">/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/</span>);
-				toCleanup.push(response);
-				done();
-			}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
-				done(err);
-			});
+			request(options)
+				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
+					expect(response).to.match(<span class="hljs-regexp">/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/</span>);
+					toCleanup.push(response);
+					done();
+				})
+				.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+					done(err);
+				})
+			;
 		});
 
 		it(<span class="hljs-string">"should reject malformed synonym"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(done)</span> </span>{
@@ -174,12 +177,15 @@ describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-fun
 				method: <span class="hljs-string">'POST'</span>,
 				json: sparta
 			};
-			request(options).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
-				toCleanup.push(response);
-				done(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"This request should fail"</span>, response));
-			}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
-				done();
-			});
+			request(options)
+				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
+					toCleanup.push(response);
+					done(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"This request should fail"</span>, response));
+				})
+				.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+					done();
+				})
+			;
 		});
 	});</pre></div></div>
             
@@ -205,13 +211,16 @@ describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-fun
 			method: <span class="hljs-string">'POST'</span>,
 			json: toCleanup,
 		};
-		request(options).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
-			toCleanup.length = <span class="hljs-number">0</span>;
-			done();
-		}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
-			<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Failed to cleanup. Items:"</span>, options);
-			done(err);
-		});
+		request(options)
+			.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
+				toCleanup.length = <span class="hljs-number">0</span>;
+				done();
+			})
+			.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+				<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Failed to cleanup. Items:"</span>, options);
+				done(err);
+			})
+		;
 	});
 });</pre></div></div>
             

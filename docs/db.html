@@ -152,20 +152,22 @@
 	}
 
 	<span class="hljs-keyword">var</span> initiation = nano.db.getAsync(dbName)
-	.then(use)
-	.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
-		<span class="hljs-keyword">if</span> (err.error == <span class="hljs-string">"not_found"</span>) {
-			winston.info(<span class="hljs-string">"DB does not exist, creating new one."</span>);
-			<span class="hljs-keyword">return</span> nano.db.createAsync(dbName)
-				.then(use);
-		}
-		<span class="hljs-keyword">throw</span> err;
-	}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(database)</span> </span>{
-		Promise.promisifyAll(database);
-		db = database;
-		winston.debug(<span class="hljs-string">"DB is ready and promisified"</span>);
-		<span class="hljs-keyword">return</span> db;
-	}).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{</pre></div></div>
+		.then(use)
+		.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+			<span class="hljs-keyword">if</span> (err.error == <span class="hljs-string">"not_found"</span>) {
+				winston.info(<span class="hljs-string">"DB does not exist, creating new one."</span>);
+				<span class="hljs-keyword">return</span> nano.db.createAsync(dbName)
+					.then(use);
+			}
+			<span class="hljs-keyword">throw</span> err;
+		})
+		.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(database)</span> </span>{
+			Promise.promisifyAll(database);
+			db = database;
+			winston.debug(<span class="hljs-string">"DB is ready and promisified"</span>);
+			<span class="hljs-keyword">return</span> db;
+		})
+		.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -181,9 +183,10 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">return</span> db;
-	}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
-		winston.error(<span class="hljs-string">"Failed to create AND/OR use DB"</span>, err);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">return</span> db;
+		})
+		.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+			winston.error(<span class="hljs-string">"Failed to create AND/OR use DB"</span>, err);</pre></div></div>
             
         </li>
         
@@ -197,16 +200,32 @@
               <p>Throws error</p>
 <ul>
 <li>when failed to get info about DB with different reason than ‘not_found’.
-TODO probably should improve detection. Simple 404 from ANY server does mean ‘not_found’</li>
+TODO probably detection should be improved. Simple 404 from ANY server does mean ‘not_found’</li>
 <li>when failed to create DB</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">throw</span> err;
-	});
-	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
-		<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> db == <span class="hljs-string">"undefined"</span>) {
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">throw</span> err;
+		})
+	;
+	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>maybe just return initiation, but I don’t know if
+it is save to call thousand times .then() of one object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> db == <span class="hljs-string">"undefined"</span>) {
 			<span class="hljs-keyword">return</span> initiation;
 		} <span class="hljs-keyword">else</span> {
 			<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(resolver)</span> </span>{ resolver(db);});
