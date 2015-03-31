@@ -19,7 +19,7 @@ function factory(create, afterTestCleanup, translate) {
 	router.post("/after-test-cleanup", validate({
 		body: afterTestCleanup.schema
 	}), afterTestCleanup.action);
-	router.get("/translate/:namespaces/:query", translate);
+	router.get("/translate/:namespaces/:query", translate.action);
 
 	// TODO:
 	//```javascript
