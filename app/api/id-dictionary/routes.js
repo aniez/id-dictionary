@@ -12,13 +12,20 @@ function factory(create, afterTestCleanup) {
 		res.send({description: "Hi, there will be documentation ..."});
 	});
 
-
-	router.post("/synonyms", validate({
-		body: create.schema
-	}), create.action);
-	router.post("/after-test-cleanup", validate({
-		body: afterTestCleanup.schema
-	}), afterTestCleanup.action);
+	router.post(
+		"/synonyms",
+		validate({
+			body: create.schema
+		}),
+		create.action
+	);
+	router.post(
+		"/after-test-cleanup",
+		validate({
+			body: afterTestCleanup.schema
+		}),
+		afterTestCleanup.action
+	);
 	// TODO:
 	//```javascript
 	// router.patch("/synonym/:id", patch)

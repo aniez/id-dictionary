@@ -28,11 +28,15 @@ module.exports["@require"] = ["./dbHelper"];
 function factory (dbHelper) {
 	return {
 		action: function (req, res, next) {
-			dbHelper.insert(req.body).then(function (insertedId) {
-				res.send(insertedId);
-			}).catch(function (error) {
-				res.status(400).send(error);
-			});
+			dbHelper.insert(req.body)
+				.then(function (insertedId) {
+					res.send(insertedId);
+				})
+				.catch(function (error) {
+					// TODO do not send whole error to world
+					res.status(400).send(error);
+				})
+			;
 		},
 
 		// <a name="SynonymSchema"></a>Synonym schema:

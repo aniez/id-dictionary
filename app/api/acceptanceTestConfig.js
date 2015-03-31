@@ -1,3 +1,4 @@
 var config = require("../acceptanceTestConfig");
-config.idDictionaryUrl = config.url + "/id-dictionary"; // to tel package on which url it is installed
+// to tell package where it is routed
+config.idDictionaryUrl = config.url + "/id-dictionary";
 module.exports = config;
