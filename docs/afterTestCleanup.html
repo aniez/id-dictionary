@@ -40,18 +40,28 @@
                 </a>
               
                 
-                <a class="source" href="db.html">
-                  db.js
-                </a>
-              
-                
                 <a class="source" href="dbHelper.html">
                   dbHelper.js
                 </a>
               
                 
+                <a class="source" href="repository.html">
+                  repository.js
+                </a>
+              
+                
                 <a class="source" href="routes.html">
                   routes.js
+                </a>
+              
+                
+                <a class="source" href="translate.html">
+                  translate.js
+                </a>
+              
+                
+                <a class="source" href="translateAcceptanceTest.html">
+                  translateAcceptanceTest.js
                 </a>
               
             </div>
@@ -117,11 +127,11 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = factory;
 <span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@singleton"</span>] = <span class="hljs-literal">true</span>;
-<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [<span class="hljs-string">"./db"</span>];
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span> <span class="hljs-params">(database)</span> </span>{
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [<span class="hljs-string">"./dbHelper"</span>];
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span> <span class="hljs-params">(dbHelper)</span> </span>{
 	<span class="hljs-keyword">return</span> {
 		action: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(req, res, next)</span> </span>{
-			database()
+			dbHelper.getDb()
 				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{
 					<span class="hljs-keyword">var</span> ids = req.body;
 					<span class="hljs-keyword">var</span> destroys = _.each(ids, getAndDestroy);

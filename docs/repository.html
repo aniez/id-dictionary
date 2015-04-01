@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>routes.js</title>
+  <title>repository.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -73,7 +73,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>routes.js</h1>
+                  <h1>repository.js</h1>
               </div>
           </li>
         
@@ -85,9 +85,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h2 id="factory-for-router-of-id-dictionary-package">Factory for router of id-dictionary package</h2>
-
+              
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Promise = <span class="hljs-built_in">require</span>(<span class="hljs-string">"bluebird"</span>);
+<span class="hljs-keyword">var</span> nanoFactory = <span class="hljs-built_in">require</span>(<span class="hljs-string">"nano"</span>);
+<span class="hljs-keyword">var</span> winston = <span class="hljs-built_in">require</span>(<span class="hljs-string">"winston"</span>);</pre></div></div>
             
         </li>
         
@@ -98,39 +101,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
+              <h2 id="db-helper">DB Helper</h2>
+
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">"express"</span>);
-<span class="hljs-keyword">var</span> router = express.Router();
-<span class="hljs-keyword">var</span> validate = <span class="hljs-built_in">require</span>(<span class="hljs-string">'express-jsonschema'</span>).validate;
-
-<span class="hljs-built_in">module</span>.exports = factory;
-<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@singleton"</span>] = <span class="hljs-literal">true</span>;
-<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [ <span class="hljs-string">"./create"</span>, <span class="hljs-string">"./afterTestCleanup"</span>, <span class="hljs-string">"./translate"</span>];
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span><span class="hljs-params">(create, afterTestCleanup, translate)</span> </span>{
-	router.get(<span class="hljs-string">"/"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(req, res, next)</span> </span>{
-		res.send({description: <span class="hljs-string">"Hi, there will be documentation ..."</span>});
-	});
-
-	router.post(
-		<span class="hljs-string">"/synonyms"</span>,
-		validate({
-			body: create.schema
-		}),
-		create.action
-	);
-	router.post(
-		<span class="hljs-string">"/after-test-cleanup"</span>,
-		validate({
-			body: afterTestCleanup.schema
-		}),
-		afterTestCleanup.action
-	);
-	router.get(
-		<span class="hljs-string">"/translate/:namespaces/:query"</span>,
-		translate.action
-	);</pre></div></div>
             
         </li>
         
@@ -141,15 +114,64 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>TODO:</p>
-<pre><code class="lang-javascript">router.patch(<span class="hljs-string">"/synonym/:id"</span>, patch)
-router.get(<span class="hljs-string">"/synonym/:id"</span>, get);
-</code></pre>
+              <p>Operations over DB</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-	<span class="hljs-keyword">return</span> router;
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = factory;
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@singleton"</span>] = <span class="hljs-literal">true</span>;
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [<span class="hljs-string">"./dbHelper"</span>];
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span> <span class="hljs-params">(dbHelper)</span> </span>{
+	<span class="hljs-keyword">return</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Insert <a href="create.html#SynonymSchema">Synonym</a> and returns its _id</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		insert: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(body)</span> </span>{
+			<span class="hljs-keyword">return</span> dbHelper.getDb()
+				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{
+					<span class="hljs-keyword">return</span> db.insertAsync(body);
+				})
+				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(inserted)</span> </span>{
+					<span class="hljs-keyword">return</span> inserted[<span class="hljs-number">0</span>].id;
+				})
+			;
+		},
+
+		translate: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(namespaces, query)</span> </span>{
+			<span class="hljs-keyword">return</span> dbHelper.getTranslateView();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>TODO work with view, namespaces and query</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-comment">/*
+				.then(function (view) {
+					console.log("hey view, ", view);
+				})
+			;
+			*/</span>
+		},
+	};
 };</pre></div></div>
             
         </li>

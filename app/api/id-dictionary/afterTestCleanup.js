@@ -16,11 +16,11 @@ var Promise = require("bluebird");
 //```
 module.exports = factory;
 module.exports["@singleton"] = true;
-module.exports["@require"] = ["./db"];
-function factory (database) {
+module.exports["@require"] = ["./dbHelper"];
+function factory (dbHelper) {
 	return {
 		action: function (req, res, next) {
-			database()
+			dbHelper.getDb()
 				.then(function (db) {
 					var ids = req.body;
 					var destroys = _.each(ids, getAndDestroy);
