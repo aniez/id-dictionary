@@ -40,18 +40,28 @@
                 </a>
               
                 
-                <a class="source" href="db.html">
-                  db.js
-                </a>
-              
-                
                 <a class="source" href="dbHelper.html">
                   dbHelper.js
                 </a>
               
                 
+                <a class="source" href="repository.html">
+                  repository.js
+                </a>
+              
+                
                 <a class="source" href="routes.html">
                   routes.js
+                </a>
+              
+                
+                <a class="source" href="translate.html">
+                  translate.js
+                </a>
+              
+                
+                <a class="source" href="translateAcceptanceTest.html">
+                  translateAcceptanceTest.js
                 </a>
               
             </div>
@@ -91,7 +101,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="db-helper">DB Helper</h2>
+              <h2 id="couch-db-helper">Couch DB Helper</h2>
 
             </div>
             
@@ -104,15 +114,36 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Operations over DB</p>
+              <p>Privides DB and Views</p>
+<p>DB factory:</p>
+<ul>
+<li>get info about DB</li>
+<li>if DB does not exists, try to create and then use it</li>
+<li>there is place for initiation of indexes and views</li>
+</ul>
+<p>Example (params in example are defaults):</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> dbHelper = factory({
+    url: <span class="hljs-string">"http://localhost:3000/db/"</span>,
+    dbName: <span class="hljs-string">"idDictionaryDefaultDb"</span>,
+});
+
+dbHelper.getDb().then(functino (db) {
+    <span class="hljs-comment">// db is instanceof nano</span>
+    ...
+});
+
+dbHelper.getTranslateView().then(functino (view) {
+    <span class="hljs-comment">// db is instanceof nano.view</span>
+    ...
+});
+</code></pre>
 
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = factory;
 <span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@singleton"</span>] = <span class="hljs-literal">true</span>;
-<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [<span class="hljs-string">"./db"</span>];
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span> <span class="hljs-params">(getDb)</span> </span>{
-	<span class="hljs-keyword">return</span> {</pre></div></div>
+<span class="hljs-built_in">module</span>.exports[<span class="hljs-string">"@require"</span>] = [];
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">factory</span> <span class="hljs-params">(config)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -123,22 +154,126 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Insert <a href="create.html#SynonymSchema">Synonym</a> and returns its _id</p>
+              <p>TODO? ‘true’ as config param will pass but will not work</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>		insert: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(body)</span> </span>{
-			<span class="hljs-keyword">return</span> getDb()
-				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{
-					<span class="hljs-keyword">return</span> db.insertAsync(body);
-				})
-				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(inserted)</span> </span>{
-					<span class="hljs-keyword">return</span> inserted[<span class="hljs-number">0</span>].id;
-				})
-			;
+            <div class="content"><div class='highlight'><pre>	config = config || {};
+	<span class="hljs-keyword">var</span> url = config.url || <span class="hljs-string">"http://localhost:3000/db/"</span>;
+	<span class="hljs-keyword">var</span> dbName = config.dbName || <span class="hljs-string">"idDictionaryDefaultDb"</span>;
+	<span class="hljs-keyword">var</span> nano = nanoFactory({
+		url: url,
+		parseUrl: <span class="hljs-literal">false</span>,
+	});
+	Promise.promisifyAll(nano);
+	Promise.promisifyAll(nano.db);
+
+	<span class="hljs-keyword">var</span> db;
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">use</span> <span class="hljs-params">(info)</span> </span>{
+		<span class="hljs-keyword">return</span> nano.db.use(dbName);
+	}
+
+	<span class="hljs-keyword">var</span> initiation = nano.db.getAsync(dbName)
+		.then(use)
+		.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+			<span class="hljs-keyword">if</span> (err.error === <span class="hljs-string">"not_found"</span>) {
+				winston.info(<span class="hljs-string">"DB does not exist, creating new one."</span>);
+				<span class="hljs-keyword">return</span> nano.db.createAsync(dbName)
+					.then(use);
+			}
+			<span class="hljs-keyword">throw</span> err;
+		})
+		.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(database)</span> </span>{
+			Promise.promisifyAll(database);
+			db = database;
+			winston.debug(<span class="hljs-string">"DB is ready and promisified"</span>);
+			<span class="hljs-keyword">return</span> db;
+		})
+		.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(db)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>TODO prepare views and reindex</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>but we don’t need to wait for views to be ready, so return previous promise</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">return</span> db;
+		})
+		.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+			winston.error(<span class="hljs-string">"Failed to create AND/OR use DB"</span>, err);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Throws error</p>
+<ul>
+<li>when failed to get info about DB with different reason than ‘not_found’.
+TODO probably detection should be improved. Simple 404 from ANY server does mean ‘not_found’</li>
+<li>when failed to create DB</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">throw</span> err;
+		})
+	;
+	<span class="hljs-keyword">return</span> {
+		getDb: 	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>maybe just return initiation, but I don’t know if
+it is save to call thousand times .then() of one object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> db === <span class="hljs-string">"undefined"</span>) {
+				<span class="hljs-keyword">return</span> initiation;
+			} <span class="hljs-keyword">else</span> {
+				<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(resolve)</span> </span>{ resolve(db);});
+			}
 		},
-	};
-};</pre></div></div>
+
+		getTranslateView: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(resolve, reject)</span> </span>{
+				reject(<span class="hljs-string">"NotImplemented yet"</span>);
+			});
+		}
+	}
+}</pre></div></div>
             
         </li>
         

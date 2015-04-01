@@ -24,11 +24,11 @@
 //```
 module.exports = factory;
 module.exports["@singleton"] = true;
-module.exports["@require"] = ["./dbHelper"];
-function factory (dbHelper) {
+module.exports["@require"] = ["./repository"];
+function factory (repository) {
 	return {
 		action: function (req, res, next) {
-			dbHelper.insert(req.body)
+			repository.insert(req.body)
 				.then(function (insertedId) {
 					res.send(insertedId);
 				})

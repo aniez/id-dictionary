@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>createAcceptanceTest.js</title>
+  <title>translateAcceptanceTest.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -73,7 +73,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>createAcceptanceTest.js</h1>
+                  <h1>translateAcceptanceTest.js</h1>
               </div>
           </li>
         
@@ -90,7 +90,9 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> validate = <span class="hljs-built_in">require</span>(<span class="hljs-string">"jsonschema"</span>).validate;
 <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">"chai"</span>).expect;
-<span class="hljs-keyword">var</span> request = <span class="hljs-built_in">require</span>(<span class="hljs-string">"request-promise"</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> request = <span class="hljs-built_in">require</span>(<span class="hljs-string">"request-promise"</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"underscore"</span>);
+<span class="hljs-keyword">var</span> Promise = <span class="hljs-built_in">require</span>(<span class="hljs-string">"bluebird"</span>);</pre></div></div>
             
         </li>
         
@@ -105,9 +107,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> config = <span class="hljs-built_in">require</span>(<span class="hljs-string">"../acceptanceTestConfig"</span>);
-
-describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> config = <span class="hljs-built_in">require</span>(<span class="hljs-string">"../acceptanceTestConfig"</span>);</pre></div></div>
             
         </li>
         
@@ -122,42 +122,9 @@ describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-fun
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">var</span> toCleanup = [];
-	describe(<span class="hljs-string">"create synonym"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
-		it(<span class="hljs-string">"should accept synonyms"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(done)</span> </span>{
-			<span class="hljs-keyword">var</span> url = config.idDictionaryUrl + <span class="hljs-string">"/synonyms"</span>
-			<span class="hljs-keyword">var</span> sparta = {
-				id: <span class="hljs-string">"sparta"</span>,
-				namespaces: [
-					<span class="hljs-string">"football"</span>,
-					<span class="hljs-string">"1-czech-league"</span>,
-				],
-				synonyms:[
-					<span class="hljs-string">"AC Sparta Praha"</span>,
-					<span class="hljs-string">"AC Sparta"</span>,
-					<span class="hljs-string">"Sparta"</span>
-				],
-			};
-			<span class="hljs-keyword">var</span> options = {
-				uri: url,
-				method: <span class="hljs-string">'POST'</span>,
-				json: sparta
-			};
-			request(options)
-				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
-					expect(response).to.match(<span class="hljs-regexp">/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/</span>);
-					toCleanup.push(response);
-					done();
-				})
-				.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
-					done(err);
-				})
-			;
-		});
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> toCleanup = [];
 
-		it(<span class="hljs-string">"should reject malformed synonym"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(done)</span> </span>{
-			<span class="hljs-keyword">var</span> url = config.idDictionaryUrl + <span class="hljs-string">"/synonyms"</span>
-			<span class="hljs-keyword">var</span> sparta = {</pre></div></div>
+describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{</pre></div></div>
             
         </li>
         
@@ -168,36 +135,12 @@ describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-fun
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Removed id: “sparta”,</p>
+              <p>prepare some data to search in</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>				namespaces: [
-					<span class="hljs-string">"football"</span>,
-					<span class="hljs-string">"1-czech-league"</span>,
-				],
-				synonyms:[
-					<span class="hljs-string">"AC Sparta Praha"</span>,
-					<span class="hljs-string">"AC Sparta"</span>,
-					<span class="hljs-string">"Sparta"</span>
-				],
-			};
-			<span class="hljs-keyword">var</span> options = {
-				uri: url,
-				method: <span class="hljs-string">'POST'</span>,
-				json: sparta
-			};
-			request(options)
-				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
-					toCleanup.push(response);
-					done(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"This request should fail"</span>, response));
-				})
-				.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
-					done();
-				})
-			;
-		});
-	});</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	before(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(done)</span> </span>{
+		<span class="hljs-keyword">var</span> url = config.idDictionaryUrl + <span class="hljs-string">"/synonyms"</span></pre></div></div>
             
         </li>
         
@@ -208,7 +151,55 @@ describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-fun
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
+              <p>data which most likely will never be real production data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">var</span> data = [
+			{id: <span class="hljs-string">"travicka"</span>, namespaces: [<span class="hljs-string">"football"</span>,<span class="hljs-string">"zelena-liga"</span>,], synonyms:[<span class="hljs-string">"Travička"</span>,<span class="hljs-string">"Ťřavěžďa"</span>,],},
+			{id: <span class="hljs-string">"grassy"</span>, namespaces: [<span class="hljs-string">"football"</span>,<span class="hljs-string">"green-league"</span>,], synonyms:[<span class="hljs-string">"Grassy F.C."</span>,<span class="hljs-string">"FC Grassy"</span>, <span class="hljs-string">"Grassy"</span>],},
+		];
+
+		<span class="hljs-keyword">var</span> promises = _.each(data, insertMockData);
+		Promise.all(promises)
+			.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+				done();
+			})
+			.catch(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(err)</span> </span>{
+				done(err)
+			})
+		;
+	});
+
+	describe(<span class="hljs-string">"translate"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+		it(<span class="hljs-string">"should return exact match"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(done)</span> </span>{
+			<span class="hljs-keyword">var</span> namespaces = <span class="hljs-string">"footbal,zelena-liga"</span>;
+			<span class="hljs-keyword">var</span> query = <span class="hljs-string">"Ťřavěžďa"</span>;
+			<span class="hljs-keyword">var</span> url = config.idDictionaryUrl + <span class="hljs-string">"/translate/"</span> + namespaces + <span class="hljs-string">"/"</span> + query;
+			<span class="hljs-keyword">var</span> options = {
+				uri: url,
+				method: <span class="hljs-string">'GET'</span>,
+			};
+			request(options)
+				.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
+					expect(response.exact).to.be(<span class="hljs-string">"travicka"</span>)
+					done();
+				})
+				.catch(done);
+		});
+	});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
               <p>remove created documents:</p>
+<p>TODO second use of same code, refactor</p>
 
             </div>
             
@@ -233,6 +224,36 @@ describe(<span class="hljs-string">"Id dictionary"</span>, <span class="hljs-fun
 		;
 	});
 });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>this method is not important, so it’s out of test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">insertMockData</span><span class="hljs-params">(oneBody)</span> </span>{
+	<span class="hljs-keyword">var</span> url = config.idDictionaryUrl + <span class="hljs-string">"/synonyms"</span>
+	<span class="hljs-keyword">var</span> options = {
+		uri: url,
+		method: <span class="hljs-string">'POST'</span>,
+		json: oneBody
+	};
+	<span class="hljs-keyword">var</span> saving = request(options);
+	saving
+		.then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(response)</span> </span>{
+			expect(response).to.match(<span class="hljs-regexp">/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/</span>);
+			toCleanup.push(response);
+			<span class="hljs-keyword">return</span> response;
+		});
+	<span class="hljs-keyword">return</span> saving;
+}</pre></div></div>
             
         </li>
         
